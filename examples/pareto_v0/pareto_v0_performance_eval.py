@@ -3,7 +3,7 @@ from opencompass.models import VLLMwithChatTemplate
 from opencompass.partitioners import SizePartitioner, NaivePartitioner, NumWorkerPartitioner
 from opencompass.runners import LocalRunner
 from opencompass.tasks import OpenICLInferTask, OpenICLEvalTask
-
+    
 with read_base():
     from ...opencompass.configs.datasets.humaneval.humaneval_gen_pareto_v0 \
         import humaneval_datasets  
