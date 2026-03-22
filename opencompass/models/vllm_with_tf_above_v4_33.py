@@ -37,6 +37,7 @@ class VLLMwithChatTemplate(BaseModel):
         stop_words: List[str] = [],
         lora_path: Optional[str] = None,
         chat_template_kwargs: Optional[dict] = None,
+        auto_truncate_size = None
     ):
         """Initialize the VLLMwithChatTemplate model.
 
@@ -63,6 +64,8 @@ class VLLMwithChatTemplate(BaseModel):
         self.tokenizer_only = tokenizer_only
         self.template_parser = _get_meta_template(meta_template)
         self.max_seq_len = _get_possible_max_seq_len(max_seq_len, path)
+        self.auto_truncate_size = auto_truncate_size
+
         if tokenizer_only:
             from transformers import AutoTokenizer
 
@@ -140,9 +143,12 @@ class VLLMwithChatTemplate(BaseModel):
         sampling_kwargs = DEFAULT_GENERATION_KWARGS.copy()
         sampling_kwargs.update(self.generation_kwargs)
         sampling_kwargs.update(kwargs)
+        if self.auto_truncate_size:
+            sampling_kwargs.update(dict(truncate_prompt_tokens = (self.max_seq_len - self.auto_truncate_size)))
         sampling_kwargs = SamplingParams(**sampling_kwargs)
         self.logger.info('Sampling Params of vLLM: ')
         self.logger.info(sampling_kwargs)
+
 
         if self.lora_path:
             try:
