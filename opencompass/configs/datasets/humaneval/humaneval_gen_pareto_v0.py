@@ -12,10 +12,14 @@ humaneval_infer_cfg = dict(
         template=dict(round=[
             dict(
                 role='HUMAN',
-                prompt=(
-                    "Complete the function according to the docstring:\n"
+                prompt = (
+                    "Complete the function according to the docstring.\n"
+                    "Return only the final function implementation.\n"
+                    "Do not include any explanations, comments, or reasoning.\n"
+                    "Output only valid code.\n\n"
                     "{prompt}\n"
-                )),
+                )
+                ),
         ])),
     retriever=dict(type=ZeroRetriever),
     inferencer=dict(type=GenInferencer))
