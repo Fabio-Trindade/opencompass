@@ -30,6 +30,7 @@ for model_config in hf_models:
     estimated_parallel_seqs =  model_config["estimated_parallel_seqs"]
     model_name = model_config["model_name"]
     hf_path = model_config["hf_path"]
+    sampling_kwargs = model_config["sampling_kwargs"]
     config = dict(
         type=VLLMwithChatTemplate,
         abbr = model_name,
@@ -49,7 +50,8 @@ for model_config in hf_models:
         run_cfg=dict(
             num_gpus=required_gpus,
             num_procs=1
-        )
+        ),
+        generation_kwargs = sampling_kwargs
     )
     models.append(config)
 
