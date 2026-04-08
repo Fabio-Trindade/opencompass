@@ -135,6 +135,7 @@ class VLLMwithChatTemplate(BaseModel):
             if self.tokenizer.bos_token:
                 bos_token = self.tokenizer.bos_token
                 messages = [message.removeprefix(bos_token) if message.startswith(bos_token) else message for message in messages]
+        print(messages[0])
         DEFAULT_GENERATION_KWARGS = {
             'temperature': 0,
             'max_tokens': max_out_len,

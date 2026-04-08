@@ -12,11 +12,12 @@ with read_base():
 
 import_ds = sum((cwe, fwe, niah, qa, vt), [])
 
-NUM_SAMPLES = 10  
+NUM_SAMPLES = 20
+  
 tokenizer_model = os.environ.get('TOKENIZER_MODEL', 'gpt-4')
 
-max_seq_lens = [ 4000, 64000, 119808]
-abbr_suffixs = ['4k', '64k', '119.808']
+max_seq_lens = [ 8000, 64000, 120000]
+abbr_suffixs = ['8k', '64k', '120k']
 
 ruler_datasets = []
 

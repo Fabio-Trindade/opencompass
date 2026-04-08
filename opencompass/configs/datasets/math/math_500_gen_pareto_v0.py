@@ -5,7 +5,19 @@ from opencompass.datasets import CustomDataset
 from opencompass.evaluator import MATHVerifyEvaluator
 
 math_reader_cfg = dict(input_columns=['problem'], output_column='solution')
+prompt = """
+Question:
+{problem}
 
+Answer the question following the instructions:
+  1) Return only the final answer
+  2) Put your final answer within \\boxed{}
+  3) Do not include any additional text outside \\boxed{}
+  4) Do not include explanations
+  5) Do not include reasoning steps
+
+Answer:
+""" 
 math_infer_cfg = dict(
     prompt_template=dict(
         type=PromptTemplate,
@@ -13,7 +25,7 @@ math_infer_cfg = dict(
             round=[
                 dict(
                     role='HUMAN',
-                    prompt='{problem}\nPut your final answer within \\boxed{}.',
+                    prompt=prompt,
                 ),
             ]
         ),

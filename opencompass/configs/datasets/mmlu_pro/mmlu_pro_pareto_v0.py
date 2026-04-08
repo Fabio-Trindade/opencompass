@@ -12,16 +12,20 @@ with read_base():
 
 
 QUERY_TEMPLATE = """
-Answer the following multiple choice question. The last line of your response should be of the following format: 'ANSWER: $LETTER' (without quotes) where LETTER is one of Options(e.g. one of ABCDEFGHIJKLMNOP). Think step by step before answering.
-
-Question:\n
+Question:
 {question}
 
-Options:\n
+Options:
 {options_str}
 
-""".strip()
-
+Choose the option that correctly answers the question, following the instructions:
+  1) Return only the final answer
+  2) The answer must be in the exact format: 'ANSWER: $LETTER'
+  3) Do not include explanations
+  4) Do not include reasoning steps
+  5) Do not include any additional text
+  6) Output must be exactly one line in the required format
+"""
 mmlu_pro_datasets = []
 
 for category in categories:
@@ -29,9 +33,7 @@ for category in categories:
         input_columns=['question', 'cot_content', 'options_str'],
         output_column='answer',
         train_split='validation',
-        train_range = 100,
         test_split='test',
-        test_range = 100
     )
     mmlu_pro_infer_cfg = dict(
         prompt_template=dict(

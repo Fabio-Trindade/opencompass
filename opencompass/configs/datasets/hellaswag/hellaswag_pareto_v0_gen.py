@@ -8,42 +8,39 @@ from opencompass.utils.text_postprocessors import first_option_postprocess
 hellaswag_reader_cfg = dict(
     input_columns=['ctx', 'A', 'B', 'C', 'D'],
     output_column='label',
+    train_range = 1000,
+    test_range = 1000
 )
 
-QUERY = """
+prompt = """
 {ctx}
-
-Answer the following multiple choice question.
-
-Return only the final answer in the exact format:
-ANSWER: $LETTER
-
-Rules:
-  1) Do not include explanations
-  2) Do not include reasoning steps
-  3) Do not include any additional text
-  4) Output must be exactly one line in the required format
 
 Question:
 Which ending makes the most sense?
 
+Options:
 A. {A}
 B. {B}
 C. {C}
 D. {D}
 
-Options:
-A, B, C, D
-
-Answer:
+Choose the option that correctly answers the question, following the instructions:
+  1) Return only the final answer
+  2) The answer must be exactly in the format: 'ANSWER: $LETTER'
+  3) $LETTER must be one of A, B, C, or D
+  4) Do not include explanations
+  5) Do not include reasoning steps
+  6) Do not include any additional text
+  7) Output must be exactly one line
 """
+
 hellaswag_infer_cfg = dict(
     prompt_template=dict(
         type=PromptTemplate,
         template=dict(round=[
             dict(
                 role='HUMAN',
-                prompt=QUERY,
+                prompt=prompt,
             ),
         ]),
     ),
