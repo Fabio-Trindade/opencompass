@@ -31,27 +31,28 @@ for model_config in hf_models:
     model_name = model_config["model_name"]
     hf_path = model_config["hf_path"]
     sampling_kwargs = model_config["sampling_kwargs"]
+ 
+   
+    sampling_kwargs["max_tokens"] = max_out
     config = dict(
         type=VLLMwithChatTemplate,
         abbr = model_name,
         path=hf_path,
         batch_size = estimated_parallel_seqs, 
-        generation_kwargs=dict(
-                            temperature = 0,
-                            max_tokens = max_out
-                            ),
+        generation_kwargs=sampling_kwargs,
         auto_truncate_size = max_out,
         model_kwargs=dict(
             gpu_memory_utilization = 0.95,
             max_num_seqs = estimated_parallel_seqs,
             trust_remote_code = True,
-            enable_prefix_caching = True
+            enable_prefix_caching = True,
+            pipeline_parallel_size = required_gpus
         ),
         run_cfg=dict(
             num_gpus=required_gpus,
             num_procs=1
         ),
-        generation_kwargs = sampling_kwargs
+        
     )
     models.append(config)
 
