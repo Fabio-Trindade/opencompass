@@ -201,12 +201,53 @@ class SizePartitioner(BasePartitioner):
         """
         dataset_abbr = dataset_abbr_from_cfg(dataset)
 
-        test_range = dataset.reader_cfg.get('test_range', '')
+        test_range = dataset.reader_cfg.get('test_range', None)
         factor = self.get_factor(dataset)
+        
+        def get_size(test_range, total_size):
+            if test_range is None:
+                return total_size
+
+            if isinstance(test_range, (int, float)):
+                if test_range <= 0:
+                    return total_size
+
+                if isinstance(test_range, float) and test_range > 0 and test_range  < 1:
+                    return int(test_range * total_size)
+
+                return min(int(test_range), total_size)
+
+            if isinstance(test_range, str):
+                rng = test_range.strip().strip("[]")
+                
+                if ":" in rng:
+                    start, end = rng.split(":")
+
+                    start = int(start) if start.strip() else 0
+                    end = int(end) if end.strip() else total_size
+
+                    if start < 0:
+                        start += total_size
+                    if end < 0:
+                        end += total_size
+
+                    start = max(0, min(start, total_size))
+                    end = max(0, min(end, total_size))
+
+                    if start > end:
+                        assert(False)
+
+                    return end - start
+
+                raise ValueError(f"Invalid range format: {test_range}")
+
+            raise TypeError(f"Unsupported test_range type: {type(test_range)}")
 
         if dataset_abbr in self.dataset_size:
-            actual_size = eval('len(range(self.dataset_size[dataset_abbr])'
-                               f'{test_range})')
+            try:
+                actual_size = get_size(test_range, self.dataset_size[dataset_abbr])
+            except Exception as e:
+                actual_size = test_range
             if get_raw_factors:
                 return actual_size, factor
             return factor * actual_size
@@ -220,8 +261,7 @@ class SizePartitioner(BasePartitioner):
                       indent=4,
                       ensure_ascii=False)
 
-        actual_size = eval('len(range(self.dataset_size[dataset_abbr])'
-                           f'{test_range})')
+        actual_size = get_size(test_range, self.dataset_size[dataset_abbr])
         if get_raw_factors:
             return actual_size, factor
         return factor * actual_size
