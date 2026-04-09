@@ -11,6 +11,8 @@ aime_reader_cfg = dict(
     output_column='answer'
 )
 
+aime2026_reader_cfg = dict(input_columns=['problem'], output_column='answer')
+
 prompt="""
 Question:
 {question}
@@ -25,6 +27,33 @@ Answer the question following the instructions:
 Answer:
 """
 
+aime2026_infer_cfg = dict(
+    prompt_template=dict(
+        type=PromptTemplate,
+        template=dict(
+            round=[
+                dict(
+                    role='HUMAN',
+                    prompt="""
+                            Problem:
+                            {problem}
+
+                            Solve the problem following the instructions:
+                              1) Return only the final answer
+                              2) Put your final answer within \\boxed{}
+                              3) Do not include explanations
+                              4) Do not include reasoning steps
+                              5) Do not include any additional text outside \\boxed{}
+
+                            Answer:
+                            """,
+                ),
+            ],
+        ),
+    ),
+    retriever=dict(type=ZeroRetriever),
+    inferencer=dict(type=GenInferencer),
+)
 aime_infer_cfg = dict(
     prompt_template=dict(
         type=PromptTemplate,
@@ -65,8 +94,8 @@ aime_datasets = [
         type=CustomDataset,
         abbr='aime2026',
         path='opencompass/aime2026',
-        reader_cfg=aime_reader_cfg,
-        infer_cfg=aime_infer_cfg,
+        reader_cfg=aime2026_reader_cfg,
+        infer_cfg=aime2026_infer_cfg,
         eval_cfg=aime_eval_cfg
     )   
 ]

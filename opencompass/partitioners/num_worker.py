@@ -134,48 +134,11 @@ class NumWorkerPartitioner(BasePartitioner):
     def get_size(self, dataset: ConfigDict) -> int:
         dataset_abbr = dataset_abbr_from_cfg(dataset)
         test_range = dataset.reader_cfg.get('test_range', '')
-        def get_size(test_range, total_size):
-            if test_range is None:
-                return total_size
-
-            if isinstance(test_range, (int, float)):
-                if test_range <= 0:
-                    return total_size
-
-                if isinstance(test_range, float) and test_range > 0 and test_range  < 1:
-                    return int(test_range * total_size)
-
-                return min(int(test_range), total_size)
-
-            if isinstance(test_range, str):
-                rng = test_range.strip().strip("[]")
-                
-                if ":" in rng:
-                    start, end = rng.split(":")
-
-                    start = int(start) if start.strip() else 0
-                    end = int(end) if end.strip() else total_size
-
-                    if start < 0:
-                        start += total_size
-                    if end < 0:
-                        end += total_size
-
-                    start = max(0, min(start, total_size))
-                    end = max(0, min(end, total_size))
-
-                    if start > end:
-                        assert(False)
-
-                    return end - start
-
-                raise ValueError(f"Invalid range format: {test_range}")
-
-            raise TypeError(f"Unsupported test_range type: {type(test_range)}")
 
         # If not forcing rebuild and data exists in cache, use the cache
         if not self.force_rebuild and dataset_abbr in self.dataset_size:
-            actual_size = get_size(test_range, self.dataset_size[dataset_abbr])
+            actual_size = eval('len(range(self.dataset_size[dataset_abbr])'
+                               f'{test_range})')
             return actual_size
 
         # Otherwise, rebuild the dataset to get its size
@@ -190,6 +153,6 @@ class NumWorkerPartitioner(BasePartitioner):
                           indent=4,
                           ensure_ascii=False)
 
-        actual_size = get_size(test_range, self.dataset_size[dataset_abbr])
-
+        actual_size = eval('len(range(self.dataset_size[dataset_abbr])'
+                           f'{test_range})')
         return actual_size

@@ -6,9 +6,6 @@ from opencompass.tasks import OpenICLInferTask, OpenICLEvalTask
     
 with read_base():
     from ...opencompass.configs.datasets.math.math_500_gen_pareto_v0 import math_datasets
-    # from ...opencompass.configs.datasets.humaneval.humaneval_gen_pareto_v0 \
-    #     import humaneval_datasets  
-    # from ...opencompass.configs.datasets.mmlu.mmlu_pareto_v0_gen import mmlu_datasets
     from ...opencompass.configs.datasets.gsm8k.gsm_8k_pareto_v0_gen import gsm8k_datasets
     from ...opencompass.configs.datasets.bbh.bbh_pareto_v0_gen import bbh_datasets
     from ...opencompass.configs.datasets.drop.drop_pareto_v0_gen import drop_datasets
@@ -39,20 +36,20 @@ datasets = [
     PMMEval_XNLI_datasets,
     piqa_datasets,
     winogrande_datasets,
-    ruler_datasets,
     mmlu_pro_datasets,
     hellaswag_datasets,
     humaneval_plus_datasets,
     mmmlu_datasets,
     supergpqa_datasets,
-    LongBenchv2_datasets,
-    aime_datasets    
+    aime_datasets,    
+    ruler_datasets,
+    LongBenchv2_datasets
 ]
 
 for i,dataset_list in enumerate(datasets):
     for j,dataset in enumerate(dataset_list):
-        dataset["reader_cfg"]["train_range"] = data_per_dataset
-        dataset["reader_cfg"]["test_range"] = data_per_dataset
+        dataset["reader_cfg"]["train_range"] = f"[:{data_per_dataset}]"
+        dataset["reader_cfg"]["test_range"] = f"[:{data_per_dataset}]"
         
 max_out =  2048
 models = []
@@ -61,10 +58,9 @@ for model_config in hf_models:
     estimated_parallel_seqs =  min(data_per_dataset,model_config["estimated_parallel_seqs"])
     model_name = model_config["model_name"]
     hf_path = model_config["hf_path"]
-    sampling_kwargs = model_config["sampling_kwargs"]
- 
+    if "meta-llama/Llama-3.1-8B-Instruct" != hf_path:
+        continue
    
-    sampling_kwargs["max_tokens"] = max_out
     config = dict(
         type=VLLMwithChatTemplate,
         abbr = model_name,
@@ -78,6 +74,7 @@ for model_config in hf_models:
         auto_truncate_size = max_out,
         model_kwargs=dict(
             gpu_memory_utilization = 0.95,
+            max_num_batched_tokens = 32000,
             max_num_seqs = estimated_parallel_seqs,
             trust_remote_code = True,
             enable_prefix_caching = True,
@@ -117,4 +114,4 @@ eval = dict(
     )
 )
 
-work_dir = "experiments/pareto_v0/performance/"
+work_dir = "experiments/pareto_v0/"

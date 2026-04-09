@@ -16,8 +16,8 @@ NUM_SAMPLES = 20
   
 tokenizer_model = os.environ.get('TOKENIZER_MODEL', 'gpt-4')
 
-max_seq_lens = [ 8000, 64000, 120000]
-abbr_suffixs = ['8k', '64k', '120k']
+max_seq_lens = [120000]
+abbr_suffixs = ['120k']
 
 ruler_datasets = []
 
