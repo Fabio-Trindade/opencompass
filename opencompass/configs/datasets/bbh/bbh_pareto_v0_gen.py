@@ -45,7 +45,7 @@ Question:
 
 Answer the question following the instructions:
   1) Return only the final answer
-  2) The answer must be exactly in the format: 'So the answer is $ANSWER'
+  2) The answer must be exactly in the format: 'So the answer is $ANSWER' (without quotes)
   3) Do not include explanations
   4) Do not include reasoning steps
   5) Do not include any additional text

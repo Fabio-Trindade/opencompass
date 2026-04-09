@@ -6,13 +6,13 @@ from opencompass.tasks import OpenICLInferTask, OpenICLEvalTask
     
 with read_base():
     from ...opencompass.configs.datasets.math.math_500_gen_pareto_v0 import math_datasets
-    from ...opencompass.configs.datasets.humaneval.humaneval_gen_pareto_v0 \
-        import humaneval_datasets  
+    # from ...opencompass.configs.datasets.humaneval.humaneval_gen_pareto_v0 \
+    #     import humaneval_datasets  
+    # from ...opencompass.configs.datasets.mmlu.mmlu_pareto_v0_gen import mmlu_datasets
     from ...opencompass.configs.datasets.gsm8k.gsm_8k_pareto_v0_gen import gsm8k_datasets
     from ...opencompass.configs.datasets.bbh.bbh_pareto_v0_gen import bbh_datasets
     from ...opencompass.configs.datasets.drop.drop_pareto_v0_gen import drop_datasets
     from ...opencompass.configs.datasets.IFEval.IFEval_gen import ifeval_datasets
-    from ...opencompass.configs.datasets.mmlu.mmlu_pareto_v0_gen import mmlu_datasets
     from ...opencompass.configs.datasets.commonsenseqa.commomsenseqa_pareto_v0_gen import commonsenseqa_datasets
     from ...opencompass.configs.datasets.PMMEval.xnli_pareto_v0_gen import PMMEval_XNLI_datasets
     from ...opencompass.configs.datasets.piqa.piqa_gen_pareto_v0 import piqa_datasets
@@ -22,24 +22,19 @@ with read_base():
     from ...opencompass.configs.datasets.hellaswag.hellaswag_pareto_v0_gen import hellaswag_datasets
     from ...opencompass.configs.datasets.humaneval_plus.humaneval_plus_pareto_v0_gen import humaneval_plus_datasets
     from ...opencompass.configs.datasets.mmmlu.mmmlu_gen import mmmlu_datasets
-    from ...opencompass.configs.datasets.supergpqa.supergpqa_gen import supergpqa_datasets
+    from ...opencompass.configs.datasets.supergpqa.supergpqa_pareto_v0 import supergpqa_datasets
     from ...opencompass.configs.datasets.longbenchv2.longbenchv2_pareto_v0_gen import LongBenchv2_datasets
     from ...opencompass.configs.datasets.aime.aime_pareto_v0 import aime_datasets
-
-    
-
     from .load_vars import total_cpus, total_gpus, hf_models
 
-data_per_dataset = 1
+data_per_dataset = 100
 
 datasets = [
     math_datasets,
-    humaneval_datasets,
     gsm8k_datasets,
     bbh_datasets,
     drop_datasets,
     ifeval_datasets,
-    mmlu_datasets,
     commonsenseqa_datasets,
     PMMEval_XNLI_datasets,
     piqa_datasets,
@@ -63,7 +58,7 @@ max_out =  2048
 models = []
 for model_config in hf_models:
     required_gpus = model_config["required_gpus"]
-    estimated_parallel_seqs =  model_config["estimated_parallel_seqs"]
+    estimated_parallel_seqs =  min(data_per_dataset,model_config["estimated_parallel_seqs"])
     model_name = model_config["model_name"]
     hf_path = model_config["hf_path"]
     sampling_kwargs = model_config["sampling_kwargs"]
@@ -101,8 +96,9 @@ datasets = sum(datasets, [])
 
 infer = dict(
     partitioner=dict(
-        type=SizePartitioner,  
-        max_task_size = 40000
+        type=NumWorkerPartitioner,
+        num_worker = total_gpus
+        # max_task_size = 40000
     ),
     runner=dict(
         type=LocalRunner,

@@ -231,6 +231,8 @@ def load_partial_dataset(
     """
     total_size = len(dataset)
     index_list = list(range(total_size))
+    print("[AD-HOC] Remove further")
+    size = int(size)
     if isinstance(size, (int, float)):
         if size >= total_size or size <= 0:
             return dataset

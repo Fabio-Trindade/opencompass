@@ -27,7 +27,7 @@ Choices:
 Choose the option that correctly answers the question, following the instructions:
   1) Return only the final answer
   2) The answer must be exactly one of: (A), (B), (C), or (D)
-  3) The output must follow the format: 'The correct answer is $OPTION'
+  3) The output must follow the format: 'The correct answer is $OPTION' (without quotes)
   4) Do not include explanations
   5) Do not include reasoning steps
   6) Do not include any additional text

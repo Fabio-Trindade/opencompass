@@ -20,7 +20,7 @@ Options:
 
 Choose the option that correctly answers the question, following the instructions:
   1) Return only the final answer
-  2) The answer must be in the exact format: 'ANSWER: $LETTER'
+  2) The answer must be in the exact format: 'ANSWER: $LETTER' (without quotes)
   3) Do not include explanations
   4) Do not include reasoning steps
   5) Do not include any additional text

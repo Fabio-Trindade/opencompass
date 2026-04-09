@@ -26,7 +26,7 @@ D. {D}
 
 Choose the option that correctly answers the question, following the instructions:
   1) Return only the final answer
-  2) The answer must be exactly in the format: 'ANSWER: $LETTER'
+  2) The answer must be exactly in the format: 'ANSWER: $LETTER' (without quotes)
   3) $LETTER must be one of A, B, C, or D
   4) Do not include explanations
   5) Do not include reasoning steps

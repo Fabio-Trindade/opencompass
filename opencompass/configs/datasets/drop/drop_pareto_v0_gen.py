@@ -22,7 +22,7 @@ Question:
 {prompt}
 
 Answer the question following the instructions:
-  1) Return only the final answer in the exact format: 'Answer: $ANSWER'
+  1) Return only the final answer in the exact format: 'Answer: $ANSWER' (without quotes)
   2) Do not include explanations
   3) Do not include reasoning steps
   4) Do not include any additional text
